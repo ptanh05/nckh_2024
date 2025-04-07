@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Define gradients -->
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4070FF" />
+      <stop offset="100%" stop-color="#8C52FF" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Outer hexagon -->
+  <path d="M50,10 L85,30 L85,70 L50,90 L15,70 L15,30 Z" 
+        fill="none" stroke="url(#logoGradient)" stroke-width="3" opacity="0.8"/>
+  
+  <!-- Inner hexagon -->
+  <path d="M50,25 L70,37 L70,63 L50,75 L30,63 L30,37 Z" 
+        fill="url(#logoGradient)" opacity="0.3"/>
+  
+  <!-- Central element - shield/lock shape -->
+  <path d="M50,35 L65,43 L65,60 L50,68 L35,60 L35,43 Z" 
+        fill="url(#logoGradient)" opacity="0.7"/>
+  
+  <!-- Lock symbol -->
+  <rect x="45" y="50" width="10" height="10" rx="2" fill="#FFFFFF" opacity="0.9"/>
+  <path d="M47,50 L47,45 C47,42 53,42 53,45 L53,50" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.9"/>
+  
+  <!-- Connection nodes -->
+  <circle cx="50" cy="10" r="3" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="85" cy="30" r="3" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="85" cy="70" r="3" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="50" cy="90" r="3" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="15" cy="70" r="3" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="15" cy="30" r="3" fill="#FFFFFF" opacity="0.8"/>
+  
+</svg>
+
