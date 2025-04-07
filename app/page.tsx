@@ -138,12 +138,10 @@ export default function Home() {
               </Button>
             </div>
             <div className="rounded-xl overflow-hidden shadow-2xl border border-white/10">
-              <Image
-                src="/placeholder.svg?height=500&width=500"
+              <img
+                src="/nft-management.svg"
                 alt="NFT Management Interface"
-                width={500}
-                height={500}
-                className="w-full"
+                className="w-full h-auto"
               />
             </div>
           </div>
