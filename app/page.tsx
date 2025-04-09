@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 export default function Home() {
   return (
     <main>
-      <Navbar />
+      
 
       {/* Hero Section */}
       <section className="min-h-screen flex items-center relative pt-16">
@@ -44,6 +44,7 @@ export default function Home() {
             </div>
             <div className="relative">
               <Image
+                src="/path-to-your-image.jpg" // Replace with the actual image path
                 alt="Blockchain Heritage Illustration"
                 width={600}
                 height={600}
