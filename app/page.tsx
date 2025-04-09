@@ -43,13 +43,13 @@ export default function Home() {
               </div>
             </div>
             <div className="relative">
-              <Image
-                src="/path-to-your-image.jpg" // Replace with the actual image path
-                alt="Blockchain Heritage Illustration"
-                width={600}
-                height={600}
-                className="w-full max-w-lg mx-auto animate-float"
-              />
+            <Image
+  alt="Blockchain Heritage Illustration"
+  width={600}
+  height={600}
+  src="/blockchain-illustration.svg" // Thay thế bằng đường dẫn đến hình ảnh thực tế
+  className="w-full max-w-lg mx-auto animate-float"
+/>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 400 400"
@@ -358,12 +358,10 @@ export default function Home() {
               </Button>
             </div>
             <div className="rounded-xl overflow-hidden shadow-2xl border border-white/10">
-              <Image
-                src="/placeholder.svg?height=500&width=500"
+              <img
+                src="/nft-management.svg"
                 alt="NFT Management Interface"
-                width={500}
-                height={500}
-                className="w-full"
+                className="w-full h-auto"
               />
             </div>
           </div>
