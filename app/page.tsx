@@ -15,14 +15,13 @@ import { Button } from "@/components/ui/button";
 export default function Home() {
   return (
     <main>
-      
-
       {/* Hero Section */}
       <section className="min-h-screen flex items-center relative pt-16">
         <div className="container mx-auto px-4 py-16 md:py-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Bên trái - Text content */}
             <div className="space-y-6">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text">
+              <h1 className="mt-[-20px] pb-2.5 text-4xl md:text-5xl lg:text-6xl font-bold gradient-text">
                 Secure Your Digital Legacy
               </h1>
               <p className="text-lg text-[#a7a9be] max-w-xl">
@@ -42,234 +41,253 @@ export default function Home() {
                 </Button>
               </div>
             </div>
+
+            {/* Bên phải - SVG illustration */}
             <div className="relative">
-            <Image
-  alt="Blockchain Heritage Illustration"
-  width={600}
-  height={600}
-  src="/blockchain-illustration.svg" // Thay thế bằng đường dẫn đến hình ảnh thực tế
-  className="w-full max-w-lg mx-auto animate-float"
-/>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 400 400"
-                className="absolute top-0 left-0"
-              >
-                <circle
-                  cx="200"
-                  cy="200"
-                  r="150"
-                  fill="url(#blueGradient)"
-                  opacity="0.1"
-                />
-
-                <defs>
-                  <linearGradient
-                    id="blueGradient"
-                    x1="0%"
-                    y1="0%"
-                    x2="100%"
-                    y2="100%"
-                  >
-                    <stop offset="0%" stopColor="#4070FF" />
-                    <stop offset="100%" stopColor="#8C52FF" />
-                  </linearGradient>
-                </defs>
-
-                <path
-                  d="M200,70 L270,105 L270,175 L200,210 L130,175 L130,105 Z"
-                  fill="none"
-                  stroke="url(#blueGradient)"
-                  strokeWidth="3"
-                  opacity="0.8"
-                />
-
-                <path
-                  d="M200,100 L245,123 L245,168 L200,190 L155,168 L155,123 Z"
-                  fill="none"
-                  stroke="url(#blueGradient)"
-                  strokeWidth="2.5"
-                  opacity="0.9"
-                />
-
-                <path
-                  d="M200,130 L225,143 L225,168 L200,180 L175,168 L175,143 Z"
-                  fill="url(#blueGradient)"
-                  opacity="0.7"
-                />
-
-                <line
-                  x1="200"
-                  y1="70"
-                  x2="200"
-                  y2="40"
-                  stroke="url(#blueGradient)"
-                  strokeWidth="2"
-                  opacity="0.6"
-                />
-                <line
-                  x1="270"
-                  y1="105"
-                  x2="300"
-                  y2="90"
-                  stroke="url(#blueGradient)"
-                  strokeWidth="2"
-                  opacity="0.6"
-                />
-                <line
-                  x1="270"
-                  y1="175"
-                  x2="300"
-                  y2="190"
-                  stroke="url(#blueGradient)"
-                  strokeWidth="2"
-                  opacity="0.6"
-                />
-                <line
-                  x1="200"
-                  y1="210"
-                  x2="200"
-                  y2="240"
-                  stroke="url(#blueGradient)"
-                  strokeWidth="2"
-                  opacity="0.6"
-                />
-                <line
-                  x1="130"
-                  y1="175"
-                  x2="100"
-                  y2="190"
-                  stroke="url(#blueGradient)"
-                  strokeWidth="2"
-                  opacity="0.6"
-                />
-                <line
-                  x1="130"
-                  y1="105"
-                  x2="100"
-                  y2="90"
-                  stroke="url(#blueGradient)"
-                  strokeWidth="2"
-                  opacity="0.6"
-                />
-
-                <circle
-                  cx="200"
-                  cy="40"
-                  r="10"
-                  fill="url(#blueGradient)"
-                  opacity="0.8"
-                />
-                <circle
-                  cx="300"
-                  cy="90"
-                  r="10"
-                  fill="url(#blueGradient)"
-                  opacity="0.8"
-                />
-                <circle
-                  cx="300"
-                  cy="190"
-                  r="10"
-                  fill="url(#blueGradient)"
-                  opacity="0.8"
-                />
-                <circle
-                  cx="200"
-                  cy="240"
-                  r="10"
-                  fill="url(#blueGradient)"
-                  opacity="0.8"
-                />
-                <circle
-                  cx="100"
-                  cy="190"
-                  r="10"
-                  fill="url(#blueGradient)"
-                  opacity="0.8"
-                />
-                <circle
-                  cx="100"
-                  cy="90"
-                  r="10"
-                  fill="url(#blueGradient)"
-                  opacity="0.8"
-                />
-
-                <line
-                  x1="200"
-                  y1="40"
-                  x2="300"
-                  y2="90"
-                  stroke="url(#blueGradient)"
-                  strokeWidth="1.5"
-                  opacity="0.5"
-                />
-                <line
-                  x1="300"
-                  y1="90"
-                  x2="300"
-                  y2="190"
-                  stroke="url(#blueGradient)"
-                  strokeWidth="1.5"
-                  opacity="0.5"
-                />
-                <line
-                  x1="300"
-                  y1="190"
-                  x2="200"
-                  y2="240"
-                  stroke="url(#blueGradient)"
-                  strokeWidth="1.5"
-                  opacity="0.5"
-                />
-                <line
-                  x1="200"
-                  y1="240"
-                  x2="100"
-                  y2="190"
-                  stroke="url(#blueGradient)"
-                  strokeWidth="1.5"
-                  opacity="0.5"
-                />
-                <line
-                  x1="100"
-                  y1="190"
-                  x2="100"
-                  y2="90"
-                  stroke="url(#blueGradient)"
-                  strokeWidth="1.5"
-                  opacity="0.5"
-                />
-                <line
-                  x1="100"
-                  y1="90"
-                  x2="200"
-                  y2="40"
-                  stroke="url(#blueGradient)"
-                  strokeWidth="1.5"
-                  opacity="0.5"
-                />
-
-                <text
-                  x="200"
-                  y="340"
-                  fontFamily="Arial"
-                  fontSize="16"
-                  fontWeight="bold"
-                  textAnchor="middle"
-                  fill="url(#blueGradient)"
+              <div className="w-full max-w-lg mx-auto animate-float">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 400 400"
+                  className="w-full h-auto"
                 >
-                  DIGITAL LEGACY
-                </text>
+                  <circle
+                    cx="200"
+                    cy="200"
+                    r="150"
+                    fill="url(#blueGradient)"
+                    opacity="0.1"
+                  />
+                  <defs>
+                    <linearGradient
+                      id="blueGradient"
+                      x1="0%"
+                      y1="0%"
+                      x2="100%"
+                      y2="100%"
+                    >
+                      <stop offset="0%" stopColor="#4070FF" />
+                      <stop offset="100%" stopColor="#8C52FF" />
+                    </linearGradient>
+                  </defs>
 
-                <circle cx="220" cy="90" r="2" fill="#ffffff" opacity="0.7" />
-                <circle cx="170" cy="220" r="2" fill="#ffffff" opacity="0.7" />
-                <circle cx="260" cy="150" r="2" fill="#ffffff" opacity="0.7" />
-                <circle cx="140" cy="140" r="2" fill="#ffffff" opacity="0.7" />
-                <circle cx="230" cy="200" r="2" fill="#ffffff" opacity="0.7" />
-                <circle cx="180" cy="110" r="2" fill="#ffffff" opacity="0.7" />
-              </svg>
+                  <path
+                    d="M200,70 L270,105 L270,175 L200,210 L130,175 L130,105 Z"
+                    fill="none"
+                    stroke="url(#blueGradient)"
+                    strokeWidth="3"
+                    opacity="0.8"
+                  />
+                  <path
+                    d="M200,100 L245,123 L245,168 L200,190 L155,168 L155,123 Z"
+                    fill="none"
+                    stroke="url(#blueGradient)"
+                    strokeWidth="2.5"
+                    opacity="0.9"
+                  />
+                  <path
+                    d="M200,130 L225,143 L225,168 L200,180 L175,168 L175,143 Z"
+                    fill="url(#blueGradient)"
+                    opacity="0.7"
+                  />
+                  <line
+                    x1="200"
+                    y1="70"
+                    x2="200"
+                    y2="40"
+                    stroke="url(#blueGradient)"
+                    strokeWidth="2"
+                    opacity="0.6"
+                  />
+                  <line
+                    x1="270"
+                    y1="105"
+                    x2="300"
+                    y2="90"
+                    stroke="url(#blueGradient)"
+                    strokeWidth="2"
+                    opacity="0.6"
+                  />
+                  <line
+                    x1="270"
+                    y1="175"
+                    x2="300"
+                    y2="190"
+                    stroke="url(#blueGradient)"
+                    strokeWidth="2"
+                    opacity="0.6"
+                  />
+                  <line
+                    x1="200"
+                    y1="210"
+                    x2="200"
+                    y2="240"
+                    stroke="url(#blueGradient)"
+                    strokeWidth="2"
+                    opacity="0.6"
+                  />
+                  <line
+                    x1="130"
+                    y1="175"
+                    x2="100"
+                    y2="190"
+                    stroke="url(#blueGradient)"
+                    strokeWidth="2"
+                    opacity="0.6"
+                  />
+                  <line
+                    x1="130"
+                    y1="105"
+                    x2="100"
+                    y2="90"
+                    stroke="url(#blueGradient)"
+                    strokeWidth="2"
+                    opacity="0.6"
+                  />
+                  <circle
+                    cx="200"
+                    cy="40"
+                    r="10"
+                    fill="url(#blueGradient)"
+                    opacity="0.8"
+                  />
+                  <circle
+                    cx="300"
+                    cy="90"
+                    r="10"
+                    fill="url(#blueGradient)"
+                    opacity="0.8"
+                  />
+                  <circle
+                    cx="300"
+                    cy="190"
+                    r="10"
+                    fill="url(#blueGradient)"
+                    opacity="0.8"
+                  />
+                  <circle
+                    cx="200"
+                    cy="240"
+                    r="10"
+                    fill="url(#blueGradient)"
+                    opacity="0.8"
+                  />
+                  <circle
+                    cx="100"
+                    cy="190"
+                    r="10"
+                    fill="url(#blueGradient)"
+                    opacity="0.8"
+                  />
+                  <circle
+                    cx="100"
+                    cy="90"
+                    r="10"
+                    fill="url(#blueGradient)"
+                    opacity="0.8"
+                  />
+                  <line
+                    x1="200"
+                    y1="40"
+                    x2="300"
+                    y2="90"
+                    stroke="url(#blueGradient)"
+                    strokeWidth="1.5"
+                    opacity="0.5"
+                  />
+                  <line
+                    x1="300"
+                    y1="90"
+                    x2="300"
+                    y2="190"
+                    stroke="url(#blueGradient)"
+                    strokeWidth="1.5"
+                    opacity="0.5"
+                  />
+                  <line
+                    x1="300"
+                    y1="190"
+                    x2="200"
+                    y2="240"
+                    stroke="url(#blueGradient)"
+                    strokeWidth="1.5"
+                    opacity="0.5"
+                  />
+                  <line
+                    x1="200"
+                    y1="240"
+                    x2="100"
+                    y2="190"
+                    stroke="url(#blueGradient)"
+                    strokeWidth="1.5"
+                    opacity="0.5"
+                  />
+                  <line
+                    x1="100"
+                    y1="190"
+                    x2="100"
+                    y2="90"
+                    stroke="url(#blueGradient)"
+                    strokeWidth="1.5"
+                    opacity="0.5"
+                  />
+                  <line
+                    x1="100"
+                    y1="90"
+                    x2="200"
+                    y2="40"
+                    stroke="url(#blueGradient)"
+                    strokeWidth="1.5"
+                    opacity="0.5"
+                  />
+                  <text
+                    x="200"
+                    y="340"
+                    fontFamily="Arial"
+                    fontSize="16"
+                    fontWeight="bold"
+                    textAnchor="middle"
+                    fill="url(#blueGradient)"
+                  >
+                    DIGITAL LEGACY
+                  </text>
+                  <circle cx="220" cy="90" r="2" fill="#ffffff" opacity="0.7" />
+                  <circle
+                    cx="170"
+                    cy="220"
+                    r="2"
+                    fill="#ffffff"
+                    opacity="0.7"
+                  />
+                  <circle
+                    cx="260"
+                    cy="150"
+                    r="2"
+                    fill="#ffffff"
+                    opacity="0.7"
+                  />
+                  <circle
+                    cx="140"
+                    cy="140"
+                    r="2"
+                    fill="#ffffff"
+                    opacity="0.7"
+                  />
+                  <circle
+                    cx="230"
+                    cy="200"
+                    r="2"
+                    fill="#ffffff"
+                    opacity="0.7"
+                  />
+                  <circle
+                    cx="180"
+                    cy="110"
+                    r="2"
+                    fill="#ffffff"
+                    opacity="0.7"
+                  />
+                </svg>
+              </div>
             </div>
           </div>
         </div>

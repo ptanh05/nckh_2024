@@ -1,45 +1,51 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Navbar from "@/components/navbar"
-import Footer from "@/components/footer"
-import { Check } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { useWallet } from "@meshsdk/react"
-import { burnTokens } from "@/service/nftcip68/burn" 
-import { 
-  createUser, 
-  getUserByWalletAddress, 
-  createTransaction, 
-  getUserTransactions, 
-  updateTransactionStatus 
-} from "@/app/services/transactionService"
+import { useState, useEffect } from "react";
+import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
+import { Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useWallet } from "@meshsdk/react";
+import { burnTokens } from "@/service/nftcip68/burn";
+import {
+  createUser,
+  getUserByWalletAddress,
+  createTransaction,
+  getUserTransactions,
+  updateTransactionStatus,
+} from "@/app/services/transactionService";
 
 export default function BurnNFT() {
-  const { connected, wallet } = useWallet()
-  const [nftName, setNftName] = useState("")
-  const [collection, setCollection] = useState("")
-  const [reason, setReason] = useState("outdated")
-  const [confirmed, setConfirmed] = useState(false)
-  const [showDetails, setShowDetails] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [txHash, setTxHash] = useState("")
-  const [status, setStatus] = useState("Pending")
-  const [userId, setUserId] = useState(null)
-  const [walletAddress, setWalletAddress] = useState("")
+  const { connected, wallet } = useWallet();
+  const [nftName, setNftName] = useState("");
+  const [collection, setCollection] = useState("");
+  const [reason, setReason] = useState("outdated");
+  const [confirmed, setConfirmed] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [txHash, setTxHash] = useState("");
+  const [status, setStatus] = useState("Pending");
+  const [userId, setUserId] = useState(null);
+  const [walletAddress, setWalletAddress] = useState("");
   interface BurnTransaction {
     nftName: string;
     txHash: string;
     created_at: string;
     status: boolean;
   }
-  
-  const [recentBurns, setRecentBurns] = useState<BurnTransaction[]>([])
-  const [isLoadingHistory, setIsLoadingHistory] = useState(false)
+
+  const [recentBurns, setRecentBurns] = useState<BurnTransaction[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
 
   // Get user info when wallet connects
   useEffect(() => {
@@ -47,66 +53,70 @@ export default function BurnNFT() {
       if (connected && wallet) {
         try {
           // Get wallet address
-          const address = await wallet.getChangeAddress()
-          setWalletAddress(address)
-          
+          const address = await wallet.getChangeAddress();
+          setWalletAddress(address);
+
           // Get or create user
-          let user = await getUserByWalletAddress(address)
+          let user = await getUserByWalletAddress(address);
           if (!user) {
-            user = await createUser(address)
+            user = await createUser(address);
           }
-          
-          setUserId(user.id)
-          fetchTransactionHistory(address)
+
+          setUserId(user.id);
+          fetchTransactionHistory(address);
         } catch (error) {
-          console.error("Error fetching user data:", error)
+          console.error("Error fetching user data:", error);
         }
       }
-    }
-    
-    fetchUserData()
-  }, [connected, wallet])
+    };
+
+    fetchUserData();
+  }, [connected, wallet]);
 
   // Fetch transaction history
   const fetchTransactionHistory = async (address: string) => {
     try {
-      setIsLoadingHistory(true)
-      const transactions = await getUserTransactions(address)
+      setIsLoadingHistory(true);
+      const transactions = await getUserTransactions(address);
       // Filter only burn transactions
-      const burnTransactions = transactions.filter((tx: { transaction_type: string }) => tx.transaction_type === "burn")
-      setRecentBurns(burnTransactions)
+      const burnTransactions = transactions.filter(
+        (tx: { transaction_type: string }) => tx.transaction_type === "burn"
+      );
+      setRecentBurns(burnTransactions);
     } catch (error) {
-      console.error("Error fetching transaction history:", error)
+      console.error("Error fetching transaction history:", error);
     } finally {
-      setIsLoadingHistory(false)
+      setIsLoadingHistory(false);
     }
-  }
+  };
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!connected) {
-      alert("Please connect your wallet first")
-      return
+      alert("Please connect your wallet first");
+      return;
     }
-    
+
     if (!confirmed) {
-      alert("Please confirm that you understand burning is permanent")
-      return
+      alert("Please confirm that you understand burning is permanent");
+      return;
     }
 
     try {
-      setIsLoading(true)
-      
+      setIsLoading(true);
+
       // Prepare the parameters for burning the NFT
-      const burnParams = [{
-        assetName: nftName,
-        quantity: "-1", // Burning 1 token
-      }]
-      
+      const burnParams = [
+        {
+          assetName: nftName,
+          quantity: "-1", // Burning 1 token
+        },
+      ];
+
       // Call the burnTokens function
-      const burnTxHash = await burnTokens(wallet, burnParams)
-      setTxHash(burnTxHash)
-      
+      const burnTxHash = await burnTokens(wallet, burnParams);
+      setTxHash(burnTxHash);
+
       // Create transaction record in database
       const transaction = {
         user_id: userId,
@@ -114,67 +124,79 @@ export default function BurnNFT() {
         to_address: walletAddress, // Same as from_address as requested
         transaction_type: "burn",
         amount: 1,
-        txHash: burnTxHash
-      }
-      
-      const savedTransaction = await createTransaction(transaction)
-      
-      setStatus("Pending")
-      setShowDetails(true)
-      
+        txHash: burnTxHash,
+      };
+
+      const savedTransaction = await createTransaction(transaction);
+
+      setStatus("Pending");
+      setShowDetails(true);
+
       // Reset form
-      setNftName("")
-      setCollection("")
-      setReason("outdated")
-      setConfirmed(false)
+      setNftName("");
+      setCollection("");
+      setReason("outdated");
+      setConfirmed(false);
 
       // Scroll to details
       setTimeout(() => {
-        document.getElementById("burnDetails")?.scrollIntoView({ behavior: "smooth" })
-      }, 100)
-      
+        document
+          .getElementById("burnDetails")
+          ?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+
       // Check transaction status after a delay and update
       setTimeout(async () => {
         try {
           // Update transaction status to completed
-          await updateTransactionStatus(savedTransaction.id, true)
-          setStatus("Completed")
+          await updateTransactionStatus(savedTransaction.id, true);
+          setStatus("Completed");
           // Refresh transaction history
-          fetchTransactionHistory(walletAddress)
+          fetchTransactionHistory(walletAddress);
         } catch (error) {
-          console.error("Error updating transaction status:", error)
+          console.error("Error updating transaction status:", error);
         }
-      }, 5000)
+      }, 5000);
     } catch (error) {
-      console.error("Error burning NFT:", error)
-      alert(`Error burning NFT: ${error instanceof Error ? error.message : String(error)}`)
+      console.error("Error burning NFT:", error);
+      alert(
+        `Error burning NFT: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   // Format date for display
   const formatDate = (dateString: string | number | Date) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    })
-  }
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
 
   return (
     <main>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-2">Burn NFT Assets</h1>
-        <p className="text-gray-400 mb-8">Permanently remove NFTs that are no longer needed from the blockchain</p>
+        <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-2">
+          Burn NFT Assets
+        </h1>
+        <p className="text-gray-400 mb-8">
+          Permanently remove NFTs that are no longer needed from the blockchain
+        </p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="space-y-6">
             <div className="card-bg p-6">
               {!connected ? (
                 <div className="text-center py-6">
-                  <p className="mb-4">Please connect your wallet to burn NFTs</p>
+                  <p className="mb-4">
+                    Please connect your wallet to burn NFTs
+                  </p>
                   <Button className="w-full">Connect Wallet</Button>
                 </div>
               ) : (
@@ -197,10 +219,18 @@ export default function BurnNFT() {
                         <SelectValue placeholder="Select Collection (Optional)" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="collection0">Select Collection (Optional)</SelectItem>
-                        <SelectItem value="collection1">Digital Heirlooms</SelectItem>
-                        <SelectItem value="collection2">Family Archives</SelectItem>
-                        <SelectItem value="collection3">Legacy Documents</SelectItem>
+                        <SelectItem value="collection0">
+                          Select Collection (Optional)
+                        </SelectItem>
+                        <SelectItem value="collection1">
+                          Digital Heirlooms
+                        </SelectItem>
+                        <SelectItem value="collection2">
+                          Family Archives
+                        </SelectItem>
+                        <SelectItem value="collection3">
+                          Legacy Documents
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -212,8 +242,12 @@ export default function BurnNFT() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="outdated">No Longer Needed</SelectItem>
-                        <SelectItem value="duplicate">Duplicate Asset</SelectItem>
+                        <SelectItem value="outdated">
+                          No Longer Needed
+                        </SelectItem>
+                        <SelectItem value="duplicate">
+                          Duplicate Asset
+                        </SelectItem>
                         <SelectItem value="error">Created in Error</SelectItem>
                         <SelectItem value="other">Other</SelectItem>
                       </SelectContent>
@@ -224,11 +258,14 @@ export default function BurnNFT() {
                     <Checkbox
                       id="confirm"
                       checked={confirmed}
-                      onCheckedChange={(checked) => setConfirmed(checked === true)}
+                      onCheckedChange={(checked) =>
+                        setConfirmed(checked === true)
+                      }
                       required
                     />
                     <Label htmlFor="confirm" className="text-sm">
-                      I understand that burning this NFT is permanent and cannot be undone
+                      I understand that burning this NFT is permanent and cannot
+                      be undone
                     </Label>
                   </div>
 
@@ -240,17 +277,34 @@ export default function BurnNFT() {
             </div>
 
             {showDetails && (
-              <div id="burnDetails" className="card-bg p-6 border border-blue-500/30">
-                <h3 className="text-lg font-medium mb-4">Burn Transaction Details</h3>
+              <div
+                id="burnDetails"
+                className="card-bg p-6 border border-blue-500/30"
+              >
+                <h3 className="text-lg font-medium mb-4">
+                  Burn Transaction Details
+                </h3>
                 <p className="mb-2">
-                  NFT "<span className="font-medium">{nftName || "Unnamed NFT"}</span>" has been successfully
-                  queued for burning.
+                  NFT "
+                  <span className="font-medium">
+                    {nftName || "Unnamed NFT"}
+                  </span>
+                  " has been successfully queued for burning.
                 </p>
                 <p className="mb-2">
                   Transaction Hash: <strong>{txHash || "Processing..."}</strong>
                 </p>
                 <p>
-                  Status: <span className={`${status === "Completed" ? "bg-green-500/10 text-green-400" : "bg-yellow-500/10 text-yellow-400"} px-2 py-1 rounded-full text-xs`}>{status}</span>
+                  Status:{" "}
+                  <span
+                    className={`${
+                      status === "Completed"
+                        ? "bg-green-500/10 text-green-400"
+                        : "bg-yellow-500/10 text-yellow-400"
+                    } px-2 py-1 rounded-full text-xs`}
+                  >
+                    {status}
+                  </span>
                 </p>
               </div>
             )}
@@ -305,25 +359,47 @@ export default function BurnNFT() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-white/10">
-                  <th className="text-left py-3 px-4 font-normal text-gray-400">NFT Name</th>
-                  <th className="text-left py-3 px-4 font-normal text-gray-400">Transaction Hash</th>
-                  <th className="text-left py-3 px-4 font-normal text-gray-400">Date</th>
-                  <th className="text-left py-3 px-4 font-normal text-gray-400">Status</th>
+                  <th className="text-left py-3 px-4 font-normal text-gray-400">
+                    NFT Name
+                  </th>
+                  <th className="text-left py-3 px-4 font-normal text-gray-400">
+                    Transaction Hash
+                  </th>
+                  <th className="text-left py-3 px-4 font-normal text-gray-400">
+                    Date
+                  </th>
+                  <th className="text-left py-3 px-4 font-normal text-gray-400">
+                    Status
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {isLoadingHistory ? (
                   <tr>
-                    <td colSpan={4} className="py-4 text-center">Loading transaction history...</td>
+                    <td colSpan={4} className="py-4 text-center">
+                      Loading transaction history...
+                    </td>
                   </tr>
                 ) : recentBurns.length > 0 ? (
                   recentBurns.map((burn, index) => (
                     <tr key={index} className="border-b border-white/10">
-                      <td className="py-3 px-4">{burn.nftName || nftName || `NFT #${index + 1}`}</td>
-                      <td className="py-3 px-4 text-sm truncate max-w-xs">{burn.txHash}</td>
-                      <td className="py-3 px-4">{formatDate(burn.created_at)}</td>
                       <td className="py-3 px-4">
-                        <span className={`${burn.status ? "bg-green-500/10 text-green-400" : "bg-yellow-500/10 text-yellow-400"} px-2 py-1 rounded-full text-xs`}>
+                        {burn.nftName || nftName || `NFT #${index + 1}`}
+                      </td>
+                      <td className="py-3 px-4 text-sm truncate max-w-xs">
+                        {burn.txHash}
+                      </td>
+                      <td className="py-3 px-4">
+                        {formatDate(burn.created_at)}
+                      </td>
+                      <td className="py-3 px-4">
+                        <span
+                          className={`${
+                            burn.status
+                              ? "bg-green-500/10 text-green-400"
+                              : "bg-yellow-500/10 text-yellow-400"
+                          } px-2 py-1 rounded-full text-xs`}
+                        >
                           {burn.status ? "Completed" : "Pending"}
                         </span>
                       </td>
@@ -331,7 +407,9 @@ export default function BurnNFT() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={4} className="py-4 text-center">No burn transactions found</td>
+                    <td colSpan={4} className="py-4 text-center">
+                      No burn transactions found
+                    </td>
                   </tr>
                 )}
               </tbody>
@@ -342,5 +420,5 @@ export default function BurnNFT() {
 
       <Footer />
     </main>
-  )
+  );
 }
