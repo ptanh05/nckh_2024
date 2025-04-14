@@ -134,14 +134,7 @@ export default function Navbar() {
           </Link>
         </nav>
 
-        <div className="relative">
-          <div className="bg-gradient-to-r from-purple-400 via-pink-500 to-yellow-400 rounded-full p-1 shadow-xl">
-            <CardanoWallet
-              label="Connect Wallet"
-              className="bg-[#4834d4] text-white rounded-full px-6 py-2 font-semibold transition-all hover:scale-105"
-            />
-          </div>
-        </div>
+        <CardanoWallet />
       </div>
     </header>
   );
