@@ -1,14 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Navbar from "@/components/navbar";
+//import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useWallet } from "@meshsdk/react";
 import updateTokens from "@/service/nftcip68/update"; // Import hàm updateTokens
 import { toast } from "@/components/ui/use-toast"; // Import toast cho thông báo
@@ -20,17 +26,32 @@ import {
   getUserByWalletAddress,
   getUserTransactions,
 } from "@/app/services/transactionService";
+interface MetadataField {
+  key: string;
+  value: string;
+  name?: string; // Add the 'name' property
+  description?: string; // Add the 'description' property if needed
+  [key: string]: string | undefined; // Allow dynamic properties
+}
+interface Transaction {
+  id: string;
+  create_at: string;
+  txHash: string;
+  transaction_type: string;
+}
 
 export default function UpdateNFT() {
   const { connected, wallet } = useWallet();
   const [nftName, setNftName] = useState("");
   const [description, setDescription] = useState("");
-  const [metadata, setMetadata] = useState([{ key: "", value: "" }]);
+  const [metadata, setMetadata] = useState<MetadataField[]>([
+    { key: "", value: "" },
+  ]);
   const [contentType, setContentType] = useState("none");
   const [assetName, setAssetName] = useState("");
   const [txHash, setTxHash] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
-  const [updateHistory, setUpdateHistory] = useState<any[]>([]);
+  const [updateHistory, setUpdateHistory] = useState<Transaction[]>([]);
 
   const addMetadataField = () => {
     setMetadata([...metadata, { key: "", value: "" }]);
@@ -42,7 +63,11 @@ export default function UpdateNFT() {
     setMetadata(newMetadata);
   };
 
-  const updateMetadataField = (index: number, field: "key" | "value", value: string) => {
+  const updateMetadataField = (
+    index: number,
+    field: "key" | "value",
+    value: string
+  ) => {
     const newMetadata = [...metadata];
     newMetadata[index][field] = value;
     setMetadata(newMetadata);
@@ -53,10 +78,12 @@ export default function UpdateNFT() {
     const useraddr = await wallet.getChangeAddress();
     const { pubKeyHash: userPubKeyHash } = deserializeAddress(useraddr);
 
-    const metadataObj: Record<string, any> = {
+    const metadataObj: MetadataField = {
       name: nftName,
       description: description,
       _pk: userPubKeyHash,
+      key: "",
+      value: "",
     };
 
     if (contentType !== "none") {
@@ -80,7 +107,9 @@ export default function UpdateNFT() {
       const userAddress = await wallet.getChangeAddress();
       const txs = await getUserTransactions(userAddress);
       // Lọc ra giao dịch có kiểu "update"
-      const updateTxs = txs.filter((tx: any) => tx.transaction_type === "update");
+      const updateTxs = txs.filter(
+        (tx: Transaction) => tx.transaction_type === "update"
+      );
       setUpdateHistory(updateTxs);
     } catch (error) {
       console.error("Error fetching update history:", error);
@@ -113,7 +142,11 @@ export default function UpdateNFT() {
       const params = [
         {
           assetName,
-          metadata: metadataObj,
+          metadata: Object.fromEntries(
+            Object.entries(metadataObj).filter(
+              ([, value]) => value !== undefined
+            )
+          ) as Record<string, string>,
           txHash: txHash || undefined,
         },
       ];
@@ -126,7 +159,7 @@ export default function UpdateNFT() {
         description: `Transaction Hash: ${txHashResult}`,
         variant: "default",
       });
-      
+
       // Lưu giao dịch cập nhật với transaction_type là "update"
       const useraddr = await wallet.getChangeAddress();
       const userData = await getUserByWalletAddress(useraddr);
@@ -153,7 +186,6 @@ export default function UpdateNFT() {
       // setMetadata([{ key: "", value: "" }]);
       // setAssetName("");
       // setTxHash("");
-
     } catch (error) {
       console.error("Error updating NFT:", error);
       toast({
@@ -175,10 +207,10 @@ export default function UpdateNFT() {
 
   return (
     <main>
-      
-
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-8">Update NFT Metadata</h1>
+        <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-8">
+          Update NFT Metadata
+        </h1>
 
         {!connected && (
           <div className="mb-6 p-4 bg-yellow-500/20 border border-yellow-500/50 rounded-lg text-yellow-200">
@@ -235,16 +267,23 @@ export default function UpdateNFT() {
                 <Label>Metadata</Label>
                 <div className="space-y-3">
                   {metadata.map((item, index) => (
-                    <div key={index} className="flex gap-2 items-center bg-white/5 p-2 rounded-md">
+                    <div
+                      key={index}
+                      className="flex gap-2 items-center bg-white/5 p-2 rounded-md"
+                    >
                       <Input
                         placeholder="Key"
                         value={item.key}
-                        onChange={(e) => updateMetadataField(index, "key", e.target.value)}
+                        onChange={(e) =>
+                          updateMetadataField(index, "key", e.target.value)
+                        }
                       />
                       <Input
                         placeholder="Value"
                         value={item.value}
-                        onChange={(e) => updateMetadataField(index, "value", e.target.value)}
+                        onChange={(e) =>
+                          updateMetadataField(index, "value", e.target.value)
+                        }
                       />
                       <Button
                         variant="destructive"
@@ -268,7 +307,9 @@ export default function UpdateNFT() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="nftAttributes">CIP68 Reference NFT Properties</Label>
+                <Label htmlFor="nftAttributes">
+                  CIP68 Reference NFT Properties
+                </Label>
                 <Select value={contentType} onValueChange={setContentType}>
                   <SelectTrigger>
                     <SelectValue placeholder="None" />
@@ -285,8 +326,8 @@ export default function UpdateNFT() {
                 </Select>
               </div>
 
-              <Button 
-                className="w-full gradient-bg text-white" 
+              <Button
+                className="w-full gradient-bg text-white"
                 onClick={handleUpdateNFT}
                 disabled={!connected || isUpdating}
               >
@@ -303,8 +344,12 @@ export default function UpdateNFT() {
                 NFT Image Preview
               </div>
               <div className="p-4 bg-white/5">
-                <div className="text-xl font-bold mb-1">{nftName || "NFT Name"}</div>
-                <div className="text-gray-400 mb-4">{description || "NFT Description"}</div>
+                <div className="text-xl font-bold mb-1">
+                  {nftName || "NFT Name"}
+                </div>
+                <div className="text-gray-400 mb-4">
+                  {description || "NFT Description"}
+                </div>
                 <h3 className="font-medium mb-2">Metadata</h3>
                 <div className="bg-black/20 rounded-md p-4 space-y-2">
                   <div className="flex justify-between border-b border-white/10 pb-2">
@@ -312,20 +357,29 @@ export default function UpdateNFT() {
                     <span>CIP68</span>
                   </div>
                   <div className="flex justify-between border-b border-white/10 pb-2">
-                    <span className="font-medium text-gray-400">Asset Name</span>
+                    <span className="font-medium text-gray-400">
+                      Asset Name
+                    </span>
                     <span>{assetName || "—"}</span>
                   </div>
                   {metadata.map((item, index) =>
                     item.key ? (
-                      <div key={index} className="flex justify-between border-b border-white/10 pb-2">
-                        <span className="font-medium text-gray-400">{item.key}</span>
+                      <div
+                        key={index}
+                        className="flex justify-between border-b border-white/10 pb-2"
+                      >
+                        <span className="font-medium text-gray-400">
+                          {item.key}
+                        </span>
                         <span>{item.value || "—"}</span>
                       </div>
                     ) : null
                   )}
                   {contentType !== "none" && (
                     <div className="flex justify-between border-b border-white/10 pb-2">
-                      <span className="font-medium text-gray-400">Content Type</span>
+                      <span className="font-medium text-gray-400">
+                        Content Type
+                      </span>
                       <span>{contentType}</span>
                     </div>
                   )}
@@ -337,7 +391,9 @@ export default function UpdateNFT() {
 
         {/* Update History Section */}
         <div className="mt-12">
-          <h2 className="text-2xl font-bold mb-4 text-center">Update History</h2>
+          <h2 className="text-2xl font-bold mb-4 text-center">
+            Update History
+          </h2>
           {updateHistory.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -352,7 +408,9 @@ export default function UpdateNFT() {
                   {updateHistory.map((tx) => (
                     <tr key={tx.id} className="border-b border-gray-200">
                       <td className="p-2">{tx.id}</td>
-                      <td className="p-2">{new Date(tx.create_at).toLocaleString()}</td>
+                      <td className="p-2">
+                        {new Date(tx.create_at).toLocaleString()}
+                      </td>
                       <td className="p-2">{tx.txHash}</td>
                     </tr>
                   ))}
@@ -360,7 +418,9 @@ export default function UpdateNFT() {
               </table>
             </div>
           ) : (
-            <p className="text-center text-gray-500">No update transactions found.</p>
+            <p className="text-center text-gray-500">
+              No update transactions found.
+            </p>
           )}
         </div>
       </div>

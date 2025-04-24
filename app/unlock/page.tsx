@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Navbar from "@/components/navbar";
+//import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
-import { Lock, CheckCircle, Clock } from "lucide-react";
+import { Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import unlock from "@/service/vesting/unlock"; // import hàm unlock
@@ -16,20 +16,22 @@ import {
 import { useWallet } from "@meshsdk/react"; // hook kết nối ví
 
 // Hàm lấy địa chỉ ví bằng cách sử dụng wallet.getChangeAddress()
-const getWalletAddress = async (wallet: { getChangeAddress: () => any }) => {
-  const hexAddress = await wallet.getChangeAddress();
+const getWalletAddress = async (wallet: {
+  getChangeAddress: () => string | Promise<string>;
+}) => {
+  const hexAddress = await Promise.resolve(wallet.getChangeAddress());
   // Nếu cần chuyển đổi hexAddress sang bech32 thì thực hiện tại đây
   return hexAddress; // trả về địa chỉ đã ở dạng bech32 nếu có
 };
 
 export default function Unlock() {
   // Sử dụng useWallet hook để lấy trạng thái kết nối và đối tượng ví
-  const { connected, wallet, connect } = useWallet();
+  const { wallet } = useWallet();
   const [walletAddress, setWalletAddress] = useState("");
-  
+
   interface Transaction {
-    user_id: any;
-    amount: any;
+    user_id: string;
+    amount: string;
     id: string;
     from_address: string;
     to_address: string;
@@ -38,13 +40,12 @@ export default function Unlock() {
     txHash?: string;
     txhash?: string;
   }
-  
+
   const [eligibleTxs, setEligibleTxs] = useState<Transaction[]>([]);
   const [historyUnlocked, setHistoryUnlocked] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(false);
 
   // Khi trang load, nếu ví chưa được kết nối thì gọi hàm connect
- 
 
   // Sau khi wallet sẵn sàng, lấy địa chỉ ví qua getChangeAddress()
   useEffect(() => {
@@ -69,7 +70,7 @@ export default function Unlock() {
     // Lấy các giao dịch nhận được và giao dịch gửi đi
     const receivedTxs = await getReceivedTransactions(walletAddress);
     const sentTxs = await getUserTransactions(walletAddress);
-  
+
     // Lọc chỉ những giao dịch có transaction_type === "lock"
     const filteredReceivedTxs = receivedTxs.filter(
       (tx: { transaction_type: string }) => tx.transaction_type === "lock"
@@ -77,7 +78,7 @@ export default function Unlock() {
     const filteredSentLockTxs = sentTxs.filter(
       (tx: { transaction_type: string }) => tx.transaction_type === "lock"
     );
-  
+
     // Gộp 2 mảng và loại trùng nếu 1 tx xuất hiện cả hai lần (dựa trên id)
     const combinedMap = new Map();
     for (const tx of filteredReceivedTxs) {
@@ -91,7 +92,7 @@ export default function Unlock() {
     const dedupedTxs = Array.from(combinedMap.values());
     setEligibleTxs(dedupedTxs);
   }
-  
+
   // Gọi fetchEligibleTransactions khi walletAddress được set
   useEffect(() => {
     if (walletAddress) {
@@ -115,7 +116,7 @@ export default function Unlock() {
         .map((tx) => tx.txHash || tx.txhash)
         .filter((hash): hash is string => hash !== undefined);
       const unlockTxHash = await unlock(wallet, txHashes);
-      
+
       // Cập nhật từng giao dịch đã unlock (status = true & transaction_type = "unlocked")
       for (const tx of eligibleTxs) {
         await updateTransactionStatus(tx.id, true, "unlocked");
@@ -131,7 +132,7 @@ export default function Unlock() {
         };
         await createTransaction(newTx);
       }
-      
+
       setHistoryUnlocked((prev) => [...prev, ...eligibleTxs]);
       setEligibleTxs([]);
       alert("Assets unlocked successfully. TxHash: " + unlockTxHash);
@@ -142,12 +143,9 @@ export default function Unlock() {
       setLoading(false);
     }
   }
-  
 
   return (
     <main>
-      
-
       <section className="bg-gradient-to-b from-[#4834d4] to-[#7e74f1] py-16 text-center">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
@@ -202,7 +200,9 @@ export default function Unlock() {
                 </table>
               </div>
             ) : (
-              <p className="text-gray-400">No eligible transactions to unlock.</p>
+              <p className="text-gray-400">
+                No eligible transactions to unlock.
+              </p>
             )}
           </CardContent>
         </Card>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -285,11 +284,11 @@ export default function BurnNFT() {
                   Burn Transaction Details
                 </h3>
                 <p className="mb-2">
-                  NFT "
+                  NFT
                   <span className="font-medium">
                     {nftName || "Unnamed NFT"}
                   </span>
-                  " has been successfully queued for burning.
+                  has been successfully queued for burning.
                 </p>
                 <p className="mb-2">
                   Transaction Hash: <strong>{txHash || "Processing..."}</strong>

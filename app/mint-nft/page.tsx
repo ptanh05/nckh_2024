@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import Navbar from "@/components/navbar";
+//import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { Upload, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,15 +18,22 @@ import {
   getUserByWalletAddress,
   getUserTransactions,
 } from "@/app/services/transactionService";
-
+interface MintTransaction {
+  id: string;
+  create_at: string;
+  txHash: string;
+  transaction_type: string;
+}
 export default function MintNFT() {
   const [file, setFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string>("/placeholder.svg?height=300&width=300");
+  const [previewUrl, setPreviewUrl] = useState<string>(
+    "/placeholder.svg?height=300&width=300"
+  );
   const [nftName, setNftName] = useState("");
   const [description, setDescription] = useState("");
   const [attributes, setAttributes] = useState([{ trait_type: "", value: "" }]);
   const [mintLoading, setMintLoading] = useState<boolean>(false);
-  const [mintHistory, setMintHistory] = useState<any[]>([]);
+  const [mintHistory, setMintHistory] = useState<MintTransaction[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { connected, wallet } = useWallet();
 
@@ -42,7 +49,10 @@ export default function MintNFT() {
     "lYTFiYmM5MjZkODIzOTJjZTcxODYyOWZjMmMwZWZjOTBjMWRiYjAxYTljN2IzIiwiZXhwIjoxNzc0NTI" +
     "0MTMyfQ.IokET3UfMOUUe9EQaZ6y7iNOnJdKdu0rbzxeO0PKTSc";
   const pinataGateway = "emerald-managing-koala-687.mypinata.cloud";
-  const pinata = new PinataSDK({ pinataJwt: JWT, pinataGateway: pinataGateway });
+  const pinata = new PinataSDK({
+    pinataJwt: JWT,
+    pinataGateway: pinataGateway,
+  });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -83,7 +93,11 @@ export default function MintNFT() {
     setAttributes(newAttributes);
   };
 
-  const updateAttribute = (index: number, field: "trait_type" | "value", value: string) => {
+  const updateAttribute = (
+    index: number,
+    field: "trait_type" | "value",
+    value: string
+  ) => {
     const newAttributes = [...attributes];
     newAttributes[index][field] = value;
     setAttributes(newAttributes);
@@ -106,7 +120,9 @@ export default function MintNFT() {
       if (!wallet || !connected) return;
       const userAddress = await wallet.getChangeAddress();
       const txs = await getUserTransactions(userAddress);
-      const mintTxs = txs.filter((tx: any) => tx.transaction_type === "mint");
+      const mintTxs = txs.filter(
+        (tx: MintTransaction) => tx.transaction_type === "mint"
+      );
       setMintHistory(mintTxs);
     } catch (error) {
       console.error("Error fetching mint history:", error);
@@ -193,23 +209,29 @@ export default function MintNFT() {
 
   return (
     <main>
-  
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-8 text-center">Mint Your NFT</h1>
+        <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-8 text-center">
+          Mint Your NFT
+        </h1>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Form Container */}
           <div className="card-bg p-6">
             <div className="mb-6 bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
-              <h4 className="font-medium text-blue-400 mb-1">CIP-68 NFT Standard</h4>
+              <h4 className="font-medium text-blue-400 mb-1">
+                CIP-68 NFT Standard
+              </h4>
               <p className="text-sm text-gray-400">
-                This minting page supports the CIP-68 NFT standard, allowing for enhanced metadata standards, updatable
-                reference scripts, and secure on-chain data management.
+                This minting page supports the CIP-68 NFT standard, allowing for
+                enhanced metadata standards, updatable reference scripts, and
+                secure on-chain data management.
               </p>
             </div>
             {/* File Upload */}
             <div
               className={`border-2 border-dashed rounded-lg p-8 text-center mb-6 cursor-pointer transition-colors ${
-                file ? "border-blue-500 bg-blue-500/5" : "border-gray-600 hover:border-blue-500 hover:bg-blue-500/5"
+                file
+                  ? "border-blue-500 bg-blue-500/5"
+                  : "border-gray-600 hover:border-blue-500 hover:bg-blue-500/5"
               }`}
               onClick={() => fileInputRef.current?.click()}
               onDragOver={(e) => e.preventDefault()}
@@ -219,12 +241,16 @@ export default function MintNFT() {
               {file ? (
                 <div>
                   <p className="font-medium">{file.name}</p>
-                  <p className="text-sm text-gray-400">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                  <p className="text-sm text-gray-400">
+                    {(file.size / 1024 / 1024).toFixed(2)} MB
+                  </p>
                 </div>
               ) : (
                 <div>
                   <p>Drag your files here, or click to select</p>
-                  <span className="text-sm text-gray-400">Support for images, audio, video and documents</span>
+                  <span className="text-sm text-gray-400">
+                    Support for images, audio, video and documents
+                  </span>
                 </div>
               )}
               <input
@@ -264,12 +290,16 @@ export default function MintNFT() {
                       <Input
                         placeholder="Trait type"
                         value={attr.trait_type}
-                        onChange={(e) => updateAttribute(index, "trait_type", e.target.value)}
+                        onChange={(e) =>
+                          updateAttribute(index, "trait_type", e.target.value)
+                        }
                       />
                       <Input
                         placeholder="Value"
                         value={attr.value}
-                        onChange={(e) => updateAttribute(index, "value", e.target.value)}
+                        onChange={(e) =>
+                          updateAttribute(index, "value", e.target.value)
+                        }
                       />
                       <Button
                         variant="destructive"
@@ -292,7 +322,14 @@ export default function MintNFT() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="royalties">Royalties (%)</Label>
-                <Input id="royalties" type="number" min="0" max="100" step="0.1" defaultValue="5" />
+                <Input
+                  id="royalties"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  defaultValue="5"
+                />
               </div>
               <Button
                 className="w-full gradient-bg text-white"
@@ -316,13 +353,18 @@ export default function MintNFT() {
               />
               <div className="w-full">
                 <h3 className="text-xl font-bold">{nftName || "NFT Name"}</h3>
-                <p className="text-gray-400 mb-4">{description || "Description will appear here"}</p>
+                <p className="text-gray-400 mb-4">
+                  {description || "Description will appear here"}
+                </p>
                 <h4 className="font-medium mb-2">Attributes</h4>
                 <div className="space-y-2 mb-6">
                   {attributes.some((attr) => attr.trait_type && attr.value) ? (
                     attributes.map((attr, index) =>
                       attr.trait_type && attr.value ? (
-                        <div key={index} className="bg-blue-500/10 p-2 rounded-md">
+                        <div
+                          key={index}
+                          className="bg-blue-500/10 p-2 rounded-md"
+                        >
                           <strong>{attr.trait_type}:</strong> {attr.value}
                         </div>
                       ) : null
@@ -359,7 +401,9 @@ export default function MintNFT() {
                   {mintHistory.map((tx) => (
                     <tr key={tx.id} className="border-b border-gray-200">
                       <td className="p-2">{tx.id}</td>
-                      <td className="p-2">{new Date(tx.create_at).toLocaleString()}</td>
+                      <td className="p-2">
+                        {new Date(tx.create_at).toLocaleString()}
+                      </td>
                       <td className="p-2">{tx.txHash}</td>
                     </tr>
                   ))}
@@ -367,7 +411,9 @@ export default function MintNFT() {
               </table>
             </div>
           ) : (
-            <p className="text-center text-gray-500">No mint transactions found.</p>
+            <p className="text-center text-gray-500">
+              No mint transactions found.
+            </p>
           )}
         </div>
       </div>

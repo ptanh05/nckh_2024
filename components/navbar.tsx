@@ -1,19 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import { Wallet } from "lucide-react";
-import { Button } from "@/components/ui/button";
+//import Image from "next/image";
+//import { Wallet } from "lucide-react";
+//import { Button } from "@/components/ui/button";
 import { useWallet, CardanoWallet } from "@meshsdk/react";
 import { useEffect, useState } from "react";
 import { checkSignature, generateNonce, IWallet } from "@meshsdk/core";
-import { useToast } from "./ui/use-toast";
+//import { useToast } from "./ui/use-toast";
 import { createUser } from "@/app/services/transactionService";
 export default function Navbar() {
   const { connected, wallet } = useWallet();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { toast } = useToast();
-
+  //const { toast } = useToast();
+  console.log("Wallet connected:", isAuthenticated);
   useEffect(() => {
     async function registerUser() {
       if (wallet && connected) {
